@@ -1,0 +1,47 @@
+# Damian Rudnik WAGO 01.2021
+# Plik uruchamia Influxa w trybie UDP i HTTP oraz nastepnie Grafane
+# PLIKI PRZECHOWYWANE SA W pamiec sterownika, JESLI CHCESZ ZAPISAC JE NA KARCIE SD ZMIEN NA /media/sd/influxdata:/var/lib/influxdb oraz /media/sd/grafana:/var/lib/grafana:rw 
+# w Grafanie nalezy zaznaczyc przy dodawaniu bazy "Skip TLS Verify" oraz zaznaczyc "Basic Auth".
+# Domyslne hasla to admin/wago, mozna zmienic ponizej
+version: '3.5'
+services:
+  database:
+    image: influxdb:1.8
+    container_name: influxdb
+    restart: always
+    volumes:
+      - /home/influxdata:/var/lib/influxdb
+    ports:
+     - '8086:8086'
+     - '8089:8089/udp'
+    networks:
+     - pfcnet
+    environment:
+     # activates the access via udp
+     - INFLUXDB_DB=baza
+     - INFLUXDB_UDP_ENABLED=true 
+     - INFLUXDB_UDP_DATABASE=baza
+     - INFLUXDB_USER=user
+     - INFLUXDB_USER_PASSWORD=wago
+     # deactivates statistics to  usage.influxdata.com
+     - INFLUXDB_REPORTING_DISABLED=true
+     - INFLUXDB_ADMIN_ENABLED=true
+     - INFLUXDB_ADMIN_USER=admin
+     - INFLUXDB_ADMIN_PASSWORD=wago
+
+  grafana:
+    image: grafana/grafana
+    user: "0"
+    container_name: grafana
+    restart: always
+    ports:
+      - '3000:3000'
+    networks:
+      - pfcnet
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /home/grafana:/var/lib/grafana:rw   
+    depends_on:
+      - database
+networks:
+  pfcnet:
