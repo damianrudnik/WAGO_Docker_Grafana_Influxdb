@@ -1,8 +1,8 @@
 # Damian Rudnik WAGO 01.2021
-# Plik uruchamia Influxa w trybie UDP i HTTP oraz nastepnie Grafane
-# PLIKI PRZECHOWYWANE SA W pamiec sterownika, JESLI CHCESZ ZAPISAC JE NA KARCIE SD ZMIEN NA /media/sd/influxdata:/var/lib/influxdb oraz /media/sd/grafana:/var/lib/grafana:rw 
-# w Grafanie nalezy zaznaczyc przy dodawaniu bazy "Skip TLS Verify" oraz zaznaczyc "Basic Auth".
-# Domyslne hasla to admin/wago, mozna zmienic ponizej
+# Running Influx with Grafana
+# PIf you want to save data to SD Card change volumes to: /media/sd/influxdata:/var/lib/influxdb and /media/sd/grafana:/var/lib/grafana:rw 
+# In Grafana you should select "Skip TLS Verify" and "Basic Auth".
+# Default passwords are admin/wago, you can change it
 version: '3.5'
 services:
   database:
@@ -13,14 +13,11 @@ services:
       - /home/influxdata:/var/lib/influxdb
     ports:
      - '8086:8086'
-     - '8089:8089/udp'
     networks:
      - pfcnet
     environment:
      # activates the access via udp
-     - INFLUXDB_DB=baza
-     - INFLUXDB_UDP_ENABLED=true 
-     - INFLUXDB_UDP_DATABASE=baza
+     - INFLUXDB_DB=db
      - INFLUXDB_USER=user
      - INFLUXDB_USER_PASSWORD=wago
      # deactivates statistics to  usage.influxdata.com
